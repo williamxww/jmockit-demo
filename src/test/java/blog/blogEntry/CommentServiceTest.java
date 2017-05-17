@@ -1,36 +1,41 @@
 package blog.blogEntry;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import org.junit.Test;
 
-import blog.common.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
-public final class CommentServiceTest
-{
-   @TestData CommentTestData commentData;
-   @ObjectUnderTest CommentService commentService;
-   @ObjectUnderTest BlogEntry blogEntry;
+public final class CommentServiceTest {
+    @TestData
+    CommentTestData commentData;
 
-   @Test
-   public void createNewPartiallyInitializedComment()
-   {
-      Comment instance = commentService.getInstance();
+    @ObjectUnderTest
+    CommentService commentService;
 
-      assertNull(instance.getId());
-      assertSame(blogEntry, instance.getBlogEntry());
-      assertNotNull(instance.getAuthor());
-      assertNull(instance.getContent());
-      assertNotNull(instance.getCreated());
-   }
+    @ObjectUnderTest
+    BlogEntry blogEntry;
 
-   @Test
-   public void saveNewComment()
-   {
-      Comment instance = commentService.getInstance();
-      instance.setContent("comment");
+    @Test
+    public void createNewPartiallyInitializedComment() {
+        Comment instance = commentService.getInstance();
 
-      commentService.save();
+        assertNull(instance.getId());
+        assertSame(blogEntry, instance.getBlogEntry());
+        assertNotNull(instance.getAuthor());
+        assertNull(instance.getContent());
+        assertNotNull(instance.getCreated());
+    }
 
-      commentData.assertSavedToDB(instance);
-   }
+    @Test
+    public void saveNewComment() {
+        Comment instance = commentService.getInstance();
+        instance.setContent("comment");
+
+        commentService.save();
+
+        commentData.assertSavedToDB(instance);
+    }
 }

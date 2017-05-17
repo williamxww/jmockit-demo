@@ -1,12 +1,17 @@
 package blog.blogEntry;
 
 import java.util.*;
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import blog.common.*;
-import blog.user.*;
-import static javax.persistence.TemporalType.*;
+import blog.common.BaseEntity;
+import blog.user.User;
+
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 public class Comment extends BaseEntity {

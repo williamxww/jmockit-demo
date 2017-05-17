@@ -1,71 +1,72 @@
 package blog.blogEntry;
 
-import java.util.*;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import org.junit.Test;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import java.util.List;
 
-import blog.common.*;
 import static blog.blogEntry.BlogEntryListService.MAX_RESULTS;
 
-public final class BlogEntryListServiceTest
-{
-   @TestData BlogEntryTestData blogEntryData;
-   @ObjectUnderTest BlogEntryListService blogEntryListService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-   @Test
-   public void getResultList()
-   {
-      BlogEntry blogEntry = blogEntryData.buildAndSave();
+public final class BlogEntryListServiceTest {
+    @TestData
+    BlogEntryTestData blogEntryData;
 
-      List<BlogEntry> resultList = blogEntryListService.getResultList();
+    @ObjectUnderTest
+    BlogEntryListService blogEntryListService;
 
-      assertTrue(resultList.contains(blogEntry));
-   }
+    @Test
+    public void getResultList() {
+        BlogEntry blogEntry = blogEntryData.buildAndSave();
 
-   @Test
-   public void pagination()
-   {
-      createBlogEntries(MAX_RESULTS + 1);
+        List<BlogEntry> resultList = blogEntryListService.getResultList();
 
-      assertEquals(0, blogEntryListService.getFirstResult());
-      assertEquals(5, blogEntryListService.getNextFirstResult());
-      assertEquals(0, blogEntryListService.getPreviousFirstResult());
-      assertTrue(blogEntryListService.isNextExists());
-      assertFalse(blogEntryListService.isPreviousExists());
+        assertTrue(resultList.contains(blogEntry));
+    }
 
-      blogEntryListService.setFirstResult(blogEntryListService.getNextFirstResult());
+    @Test
+    public void pagination() {
+        createBlogEntries(MAX_RESULTS + 1);
 
-      assertEquals(5, blogEntryListService.getFirstResult());
-      assertEquals(10, blogEntryListService.getNextFirstResult());
-      assertEquals(0, blogEntryListService.getPreviousFirstResult());
-      assertFalse(blogEntryListService.isNextExists());
-      assertTrue(blogEntryListService.isPreviousExists());
-   }
+        assertEquals(0, blogEntryListService.getFirstResult());
+        assertEquals(5, blogEntryListService.getNextFirstResult());
+        assertEquals(0, blogEntryListService.getPreviousFirstResult());
+        assertTrue(blogEntryListService.isNextExists());
+        assertFalse(blogEntryListService.isPreviousExists());
 
-   void createBlogEntries(int quantity)
-   {
-      for (int i = 0; i < quantity; i++) {
-         blogEntryData.buildAndSave();
-      }
-   }
+        blogEntryListService.setFirstResult(blogEntryListService.getNextFirstResult());
 
-   @Test
-   public void findEntriesUpToMaximumQuantity()
-   {
-      createBlogEntries(MAX_RESULTS + 1);
+        assertEquals(5, blogEntryListService.getFirstResult());
+        assertEquals(10, blogEntryListService.getNextFirstResult());
+        assertEquals(0, blogEntryListService.getPreviousFirstResult());
+        assertFalse(blogEntryListService.isNextExists());
+        assertTrue(blogEntryListService.isPreviousExists());
+    }
 
-      List<BlogEntry> found = blogEntryListService.getResultList();
+    void createBlogEntries(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            blogEntryData.buildAndSave();
+        }
+    }
 
-      assertEquals(MAX_RESULTS, found.size());
-   }
+    @Test
+    public void findEntriesUpToMaximumQuantity() {
+        createBlogEntries(MAX_RESULTS + 1);
 
-   @Test
-   public void previousFirstResult()
-   {
-      blogEntryListService.setFirstResult(10);
+        List<BlogEntry> found = blogEntryListService.getResultList();
 
-      assertEquals(15, blogEntryListService.getNextFirstResult());
-      assertEquals(5, blogEntryListService.getPreviousFirstResult());
-   }
+        assertEquals(MAX_RESULTS, found.size());
+    }
+
+    @Test
+    public void previousFirstResult() {
+        blogEntryListService.setFirstResult(10);
+
+        assertEquals(15, blogEntryListService.getNextFirstResult());
+        assertEquals(5, blogEntryListService.getPreviousFirstResult());
+    }
 }

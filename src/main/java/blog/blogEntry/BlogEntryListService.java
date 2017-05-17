@@ -1,8 +1,9 @@
 package blog.blogEntry;
 
 import java.util.*;
-import javax.enterprise.context.*;
-import javax.inject.*;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 @RequestScoped

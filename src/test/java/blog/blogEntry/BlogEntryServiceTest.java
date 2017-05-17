@@ -1,135 +1,138 @@
 package blog.blogEntry;
 
-import javax.enterprise.context.*;
-import javax.validation.*;
+import blog.common.Dependency;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import org.junit.Test;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import javax.enterprise.context.Conversation;
+import javax.validation.ConstraintViolationException;
 
-import blog.common.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-public final class BlogEntryServiceTest
-{
-   @TestData BlogEntryTestData blogEntryData;
-   @ObjectUnderTest BlogEntryService blogEntryService;
-   @Dependency Conversation conversation;
+public final class BlogEntryServiceTest {
+    @TestData
+    BlogEntryTestData blogEntryData;
 
-   @Test
-   public void beginNewBlogEntry()
-   {
-      assertTrue(conversation.isTransient());
+    @ObjectUnderTest
+    BlogEntryService blogEntryService;
 
-      blogEntryService.newInstance();
-      BlogEntry instance = blogEntryService.getInstance();
+    @Dependency
+    Conversation conversation;
 
-      assertNull(instance.getId());
-      assertNotNull(instance.getAuthor());
-      assertNull(blogEntryService.getId());
-      assertFalse(conversation.isTransient());
-   }
+    @Test
+    public void beginNewBlogEntry() {
+        assertTrue(conversation.isTransient());
 
-   @Test
-   public void persistNewBlogEntry()
-   {
-      blogEntryService.newInstance();
-      BlogEntry instance = blogEntryService.getInstance();
-      String title = "title";
-      instance.setTitle(title);
-      String content = "content";
-      instance.setContent(content);
+        blogEntryService.newInstance();
+        BlogEntry instance = blogEntryService.getInstance();
 
-      blogEntryService.save();
+        assertNull(instance.getId());
+        assertNotNull(instance.getAuthor());
+        assertNull(blogEntryService.getId());
+        assertFalse(conversation.isTransient());
+    }
 
-      blogEntryData.assertSavedToDB(instance);
-      assertEquals(title, instance.getTitle());
-      assertEquals(content, instance.getContent());
-      assertEquals(content, instance.getShortContent());
-      assertNotNull(instance.getCreated());
-      assertNotNull(instance.getVersion());
-      assertTrue(instance.getComments().isEmpty());
-   }
+    @Test
+    public void persistNewBlogEntry() {
+        blogEntryService.newInstance();
+        BlogEntry instance = blogEntryService.getInstance();
+        String title = "title";
+        instance.setTitle(title);
+        String content = "content";
+        instance.setContent(content);
 
-   @Test(expected = ConstraintViolationException.class)
-   public void attemptToSaveWithoutAuthor()
-   {
-      blogEntryService.newInstance();
-      BlogEntry instance = blogEntryService.getInstance();
-      instance.setAuthor(null);
+        blogEntryService.save();
 
-      blogEntryService.save();
-   }
+        blogEntryData.assertSavedToDB(instance);
+        assertEquals(title, instance.getTitle());
+        assertEquals(content, instance.getContent());
+        assertEquals(content, instance.getShortContent());
+        assertNotNull(instance.getCreated());
+        assertNotNull(instance.getVersion());
+        assertTrue(instance.getComments().isEmpty());
+    }
 
-   @Test
-   public void selectBlogEntryById()
-   {
-      BlogEntry blogEntry = blogEntryData.buildAndSave();
-      assertTrue(conversation.isTransient());
+    @Test(expected = ConstraintViolationException.class)
+    public void attemptToSaveWithoutAuthor() {
+        blogEntryService.newInstance();
+        BlogEntry instance = blogEntryService.getInstance();
+        instance.setAuthor(null);
 
-      blogEntryService.setId(blogEntry.getId());
-      BlogEntry instance = blogEntryService.getInstance();
+        blogEntryService.save();
+    }
 
-      assertEquals(blogEntry.getId(), instance.getId());
-      String shortContent = instance.getShortContent();
-      assertTrue(shortContent.length() < instance.getContent().length());
-      assertTrue(shortContent.endsWith("..."));
-      assertFalse(conversation.isTransient());
-   }
+    @Test
+    public void selectBlogEntryById() {
+        BlogEntry blogEntry = blogEntryData.buildAndSave();
+        assertTrue(conversation.isTransient());
 
-   @Test
-   public void selectADifferentBlogEntry()
-   {
-      BlogEntry blogEntry1 = blogEntryData.withTitle("Blog entry 1").buildAndSave();
-      BlogEntry blogEntry2 = blogEntryData.withTitle("Blog entry 2").buildAndSave();
+        blogEntryService.setId(blogEntry.getId());
+        BlogEntry instance = blogEntryService.getInstance();
 
-      blogEntryService.setId(blogEntry1.getId());
-      BlogEntry instance1 = blogEntryService.getInstance();
+        assertEquals(blogEntry.getId(), instance.getId());
+        String shortContent = instance.getShortContent();
+        assertTrue(shortContent.length() < instance.getContent().length());
+        assertTrue(shortContent.endsWith("..."));
+        assertFalse(conversation.isTransient());
+    }
 
-      blogEntryService.setId(blogEntry2.getId());
-      BlogEntry instance2 = blogEntryService.getInstance();
+    @Test
+    public void selectADifferentBlogEntry() {
+        BlogEntry blogEntry1 = blogEntryData.withTitle("Blog entry 1").buildAndSave();
+        BlogEntry blogEntry2 = blogEntryData.withTitle("Blog entry 2").buildAndSave();
 
-      assertSame(blogEntry1, instance1);
-      assertSame(blogEntry2, instance2);
-   }
+        blogEntryService.setId(blogEntry1.getId());
+        BlogEntry instance1 = blogEntryService.getInstance();
 
-   @Test
-   public void modifyABlogEntry()
-   {
-      BlogEntry blogEntry = blogEntryData.buildAndSave();
-      blogEntryService.setId(blogEntry.getId());
-      BlogEntry instance = blogEntryService.getInstance();
-      String newContent = "Modified content";
+        blogEntryService.setId(blogEntry2.getId());
+        BlogEntry instance2 = blogEntryService.getInstance();
 
-      instance.setContent(newContent);
-      blogEntryService.save();
+        assertSame(blogEntry1, instance1);
+        assertSame(blogEntry2, instance2);
+    }
 
-      BlogEntry fromDB = blogEntryData.assertSavedToDB(instance);
-      assertEquals(newContent, fromDB.getContent());
-      assertEquals(blogEntry.getId(), blogEntryService.getId());
-   }
+    @Test
+    public void modifyABlogEntry() {
+        BlogEntry blogEntry = blogEntryData.buildAndSave();
+        blogEntryService.setId(blogEntry.getId());
+        BlogEntry instance = blogEntryService.getInstance();
+        String newContent = "Modified content";
 
-   @Test
-   public void deleteSelectedBlogEntry()
-   {
-      BlogEntry blogEntry = blogEntryData.buildAndSave();
-      blogEntryService.setId(blogEntry.getId());
-      blogEntryService.getInstance();
+        instance.setContent(newContent);
+        blogEntryService.save();
 
-      blogEntryService.delete();
+        BlogEntry fromDB = blogEntryData.assertSavedToDB(instance);
+        assertEquals(newContent, fromDB.getContent());
+        assertEquals(blogEntry.getId(), blogEntryService.getId());
+    }
 
-      assertTrue(conversation.isTransient());
-      blogEntryData.assertDeletedFromDB(blogEntry);
-   }
+    @Test
+    public void deleteSelectedBlogEntry() {
+        BlogEntry blogEntry = blogEntryData.buildAndSave();
+        blogEntryService.setId(blogEntry.getId());
+        blogEntryService.getInstance();
 
-   @Test
-   public void deleteSelectedBlogEntry_withDetachedInstance()
-   {
-      BlogEntry blogEntry = blogEntryData.buildAndSave();
-      blogEntryService.setId(blogEntry.getId());
-      BlogEntry instance = blogEntryService.getInstance();
-      blogEntryData.detachFromPersistenceContext(instance);
+        blogEntryService.delete();
 
-      blogEntryService.delete();
+        assertTrue(conversation.isTransient());
+        blogEntryData.assertDeletedFromDB(blogEntry);
+    }
 
-      blogEntryData.assertDeletedFromDB(instance);
-   }
+    @Test
+    public void deleteSelectedBlogEntry_withDetachedInstance() {
+        BlogEntry blogEntry = blogEntryData.buildAndSave();
+        blogEntryService.setId(blogEntry.getId());
+        BlogEntry instance = blogEntryService.getInstance();
+        blogEntryData.detachFromPersistenceContext(instance);
+
+        blogEntryService.delete();
+
+        blogEntryData.assertDeletedFromDB(instance);
+    }
 }

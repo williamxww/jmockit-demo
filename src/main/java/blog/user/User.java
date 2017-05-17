@@ -1,10 +1,11 @@
 package blog.user;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import blog.common.BaseEntity;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 
-import blog.common.*;
-import org.jasypt.util.password.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User extends BaseEntity {

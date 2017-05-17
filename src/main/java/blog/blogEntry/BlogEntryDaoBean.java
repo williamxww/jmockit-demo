@@ -1,10 +1,10 @@
 package blog.blogEntry;
 
-import java.util.*;
-import javax.ejb.*;
-import javax.inject.*;
+import blog.common.Database;
 
-import blog.common.*;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 @Stateless
 public class BlogEntryDaoBean implements BlogEntryDao {

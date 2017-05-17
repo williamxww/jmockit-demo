@@ -1,11 +1,12 @@
 package blog.user;
 
-import javax.persistence.*;
+import blog.common.TestData;
+import org.junit.Test;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import javax.persistence.PersistenceException;
 
-import blog.common.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class UserTest {
     @TestData

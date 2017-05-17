@@ -1,9 +1,9 @@
 package blog.user;
 
-import javax.ejb.*;
-import javax.inject.*;
+import blog.common.Database;
 
-import blog.common.*;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 @Stateless
 public class UserService {

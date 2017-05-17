@@ -1,50 +1,53 @@
 package blog.blogEntry;
 
-import javax.annotation.*;
-import javax.inject.*;
+import blog.common.BaseTestData;
+import blog.user.User;
+import blog.user.UserTestData;
 
-import blog.common.*;
-import blog.user.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
-public final class BlogEntryTestData extends BaseTestData<BlogEntry>
-{
-   // Injects implementation class instance for injection points having an interface type.
-   @Inject private BlogEntryDaoBean dao;
+public final class BlogEntryTestData extends BaseTestData<BlogEntry> {
+    // Injects implementation class instance for injection points having an
+    // interface type.
+    @Inject
+    private BlogEntryDaoBean dao;
 
-   @Inject private UserTestData userData;
-   @Inject private BlogEntry currentBlogEntry;
-   private String withTitle;
+    @Inject
+    private UserTestData userData;
 
-   @PostConstruct
-   private void defineCurrentBlogEntry()
-   {
-      currentBlogEntry.setTitle("Integration testing with JMockit");
-      currentBlogEntry.setContent("...");
-      save(currentBlogEntry);
-   }
+    @Inject
+    private BlogEntry currentBlogEntry;
 
-   public BlogEntryTestData withTitle(String title)
-   {
-      withTitle = title;
-      return this;
-   }
+    private String withTitle;
 
-   @Override
-   public BlogEntry build()
-   {
-      User author = userData.buildAndSave();
-      String title = withTitle != null ? withTitle : "Lorem ipsum dolor sit amet";
+    @PostConstruct
+    private void defineCurrentBlogEntry() {
+        currentBlogEntry.setTitle("Integration testing with JMockit");
+        currentBlogEntry.setContent("...");
+        save(currentBlogEntry);
+    }
 
-      BlogEntry blogEntry = new BlogEntry();
-      blogEntry.setAuthor(author);
-      blogEntry.setTitle(title);
-      blogEntry.setContent(
-         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
-         "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores " +
-         "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. " +
-         "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
-         "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores " +
-         "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet");
-      return blogEntry;
-   }
+    public BlogEntryTestData withTitle(String title) {
+        withTitle = title;
+        return this;
+    }
+
+    @Override
+    public BlogEntry build() {
+        User author = userData.buildAndSave();
+        String title = withTitle != null ? withTitle : "Lorem ipsum dolor sit amet";
+
+        BlogEntry blogEntry = new BlogEntry();
+        blogEntry.setAuthor(author);
+        blogEntry.setTitle(title);
+        blogEntry.setContent(
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
+                        + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores "
+                        + "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
+                        + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
+                        + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores "
+                        + "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet");
+        return blogEntry;
+    }
 }

@@ -1,11 +1,12 @@
 package blog.security;
 
-import java.io.*;
-import javax.enterprise.context.*;
-import javax.enterprise.inject.*;
-import javax.inject.*;
 
-import blog.user.*;
+import blog.user.User;
+
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import java.io.Serializable;
 
 @Named
 @SessionScoped

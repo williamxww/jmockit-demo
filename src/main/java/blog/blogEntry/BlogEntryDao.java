@@ -1,7 +1,7 @@
 package blog.blogEntry;
 
-import java.util.*;
-import javax.ejb.*;
+import javax.ejb.Local;
+import java.util.List;
 
 /**
  * When a {@code @Tested} object has a dependency whose only known type is an

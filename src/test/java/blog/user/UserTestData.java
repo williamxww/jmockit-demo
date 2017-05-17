@@ -1,9 +1,9 @@
 package blog.user;
 
-import javax.annotation.*;
-import javax.inject.*;
+import blog.common.BaseTestData;
 
-import blog.common.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 public final class UserTestData extends BaseTestData<User> {
     @Inject

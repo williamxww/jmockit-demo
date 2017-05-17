@@ -1,9 +1,23 @@
 package blog.blogEntry;
 
-import javax.inject.*;
+import blog.common.BaseTestData;
+import blog.common.Dependency;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import blog.user.User;
+import blog.user.UserTestData;
+import org.junit.Test;
 
-import blog.common.*;
-import blog.user.*;
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public final class CommentTestData extends BaseTestData<Comment> {
     @Inject

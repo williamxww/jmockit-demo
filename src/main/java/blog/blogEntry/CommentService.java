@@ -1,34 +1,40 @@
 package blog.blogEntry;
 
-import javax.enterprise.context.*;
-import javax.inject.*;
+import blog.common.Database;
+import blog.security.CurrentUser;
+import blog.user.User;
 
-import blog.common.*;
-import blog.security.*;
-import blog.user.*;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-@Named @RequestScoped
-public class CommentService
-{
-   @Inject @CurrentUser private User user;
-   @Inject private BlogEntry blogEntry;
-   @Inject private Database db;
-   private Comment instance;
+@Named
+@RequestScoped
+public class CommentService {
+    @Inject
+    @CurrentUser
+    private User user;
 
-   public Comment getInstance()
-   {
-      if (instance == null) {
-         instance = new Comment();
-         instance.setAuthor(user);
-         instance.setBlogEntry(blogEntry);
-      }
+    @Inject
+    private BlogEntry blogEntry;
 
-      return instance;
-   }
+    @Inject
+    private Database db;
 
-   public void save()
-   {
-      db.save(instance);
-      instance = null;
-   }
+    private Comment instance;
+
+    public Comment getInstance() {
+        if (instance == null) {
+            instance = new Comment();
+            instance.setAuthor(user);
+            instance.setBlogEntry(blogEntry);
+        }
+
+        return instance;
+    }
+
+    public void save() {
+        db.save(instance);
+        instance = null;
+    }
 }

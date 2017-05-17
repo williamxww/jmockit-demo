@@ -1,11 +1,13 @@
 package blog.security;
 
-import java.io.*;
-import javax.enterprise.context.*;
-import javax.inject.*;
-import javax.servlet.http.*;
+import blog.user.User;
+import blog.user.UserService;
 
-import blog.user.*;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 
 @Named
 @RequestScoped

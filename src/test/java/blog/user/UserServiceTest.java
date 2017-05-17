@@ -1,9 +1,11 @@
 package blog.user;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import org.junit.Test;
 
-import blog.common.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public final class UserServiceTest {
     @TestData

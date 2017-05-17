@@ -1,17 +1,19 @@
 package blog.blogEntry;
 
-import java.io.*;
-import java.util.logging.*;
-import javax.enterprise.context.*;
-import javax.enterprise.inject.*;
-import javax.inject.*;
+import blog.common.Database;
+import blog.security.CurrentUser;
+import blog.user.User;
 
-import blog.common.*;
-import blog.security.*;
-import blog.user.*;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.logging.Logger;
 
 @Named
-@ConversationScoped
+// @ConversationScoped
 public class BlogEntryService implements Serializable {
     private static final long serialVersionUID = 1L;
 

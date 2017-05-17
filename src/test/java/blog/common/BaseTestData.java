@@ -1,89 +1,101 @@
 package blog.common;
 
-import java.lang.reflect.*;
-import javax.annotation.*;
-import javax.persistence.*;
+import blog.common.Dependency;
+import blog.common.ObjectUnderTest;
+import blog.common.TestData;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.Conversation;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 
-public abstract class BaseTestData<E extends BaseEntity>
-{
-   private final Class<E> entityClass;
-   @PersistenceContext private EntityManager em;
-   private int id;
+import java.lang.reflect.ParameterizedType;
 
-   @SuppressWarnings("unchecked")
-   protected BaseTestData()
-   {
-      entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-   }
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-   @PostConstruct
-   private void beginTransaction()
-   {
-      EntityTransaction transaction = em.getTransaction();
+public abstract class BaseTestData<E extends BaseEntity> {
+    private final Class<E> entityClass;
 
-      if (!transaction.isActive()) {
-         transaction.begin();
-      }
-   }
+    @PersistenceContext
+    private EntityManager em;
 
-   @PreDestroy
-   private void endTransaction()
-   {
-      EntityTransaction transaction = em.getTransaction();
+    private int id;
 
-      if (transaction.isActive()) {
-         transaction.rollback();
-      }
-   }
+    @SuppressWarnings("unchecked")
+    protected BaseTestData() {
+        entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 
-   protected final int getId() { return id++; }
+    @PostConstruct
+    private void beginTransaction() {
+        EntityTransaction transaction = em.getTransaction();
 
-   public final void save(BaseEntity entity)
-   {
-      if (entity.getId() == null) {
-         em.persist(entity);
-      }
+        if (!transaction.isActive()) {
+            transaction.begin();
+        }
+    }
 
-      em.flush();
-   }
+    @PreDestroy
+    private void endTransaction() {
+        EntityTransaction transaction = em.getTransaction();
 
-   public final E find(Long entityId)
-   {
-      return em.find(entityClass, entityId);
-   }
+        if (transaction.isActive()) {
+            transaction.rollback();
+        }
+    }
 
-   public final void detachFromPersistenceContext(BaseEntity entity)
-   {
-      em.detach(entity);
-   }
+    protected final int getId() {
+        return id++;
+    }
 
-   public final E assertSavedToDB(E entity)
-   {
-      if (em.contains(entity)) {
-         em.detach(entity);
-      }
+    public final void save(BaseEntity entity) {
+        if (entity.getId() == null) {
+            em.persist(entity);
+        }
 
-      E fromDb = em.find(entityClass, entity.getId());
+        em.flush();
+    }
 
-      assertEquals(entity.getId(), fromDb.getId());
-      assertNotSame(entity, fromDb);
-      return fromDb;
-   }
+    public final E find(Long entityId) {
+        return em.find(entityClass, entityId);
+    }
 
-   public final void assertDeletedFromDB(BaseEntity entity)
-   {
-      BaseEntity deletedEntity = find(entity.getId());
-      assertNull(deletedEntity);
-   }
+    public final void detachFromPersistenceContext(BaseEntity entity) {
+        em.detach(entity);
+    }
 
-   public final E buildAndSave()
-   {
-      E entity = build();
-      save(entity);
-      return entity;
-   }
+    public final E assertSavedToDB(E entity) {
+        if (em.contains(entity)) {
+            em.detach(entity);
+        }
 
-   protected abstract E build();
+        E fromDb = em.find(entityClass, entity.getId());
+
+        assertEquals(entity.getId(), fromDb.getId());
+        assertNotSame(entity, fromDb);
+        return fromDb;
+    }
+
+    public final void assertDeletedFromDB(BaseEntity entity) {
+        BaseEntity deletedEntity = find(entity.getId());
+        assertNull(deletedEntity);
+    }
+
+    public final E buildAndSave() {
+        E entity = build();
+        save(entity);
+        return entity;
+    }
+
+    protected abstract E build();
 }

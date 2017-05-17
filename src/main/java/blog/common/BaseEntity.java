@@ -1,9 +1,12 @@
 package blog.common;
 
-import java.io.*;
-import java.sql.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.*;
 
 @MappedSuperclass
 public class BaseEntity implements Serializable {
